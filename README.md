@@ -5,4 +5,4 @@ Les fichiers sont à placer dans le répertoire /src/main du projet Java utilis�
 
 Tous les fichiers du projet se trouvent dans le package main.
 
-Le dossier "rapport" contient le .tex et le .pdf correspondant du rapport.
+Le dossier "rapport" contient les .tex et .pdf correspondants du rapport.
