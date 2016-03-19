@@ -1,5 +1,5 @@
 # Sudoku
-Le contenu du répertoire est en fait le contenu du répertoire projet Java en question, qui s'appelle
-également Sudoku. Les fichiers sources se trouvent donc dans ./src/main
+Le répertoire contient les fichiers Java source du programme. Les fichiers sont à placer dans le
+répertoire /src/main du projet Java.
 
 Tous les fichiers du projet se trouvent dans le package main.
