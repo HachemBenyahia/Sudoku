@@ -1,8 +1,8 @@
 # Sudoku
-Le répertoire contient les fichiers .java du programme. 
+`doc` contient la Javadoc actuelle du projet.
 
-Les fichiers sont à placer dans le répertoire /src/main du projet Java utilisé.
+`jar` contient les `.jar` qu'il faut linker au projet.
 
-Tous les fichiers du projet se trouvent dans le package main.
+`rapport` contient le rapport à rendre (`.pdf` et `.tex`).
 
-Le dossier "rapport" contient les .tex et .pdf correspondants du rapport.
+`src` contient les fichiers `.java` et d'autres fichiers utilisés par le programme.
