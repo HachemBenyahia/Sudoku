@@ -12,7 +12,7 @@ import jade.core.behaviours.Behaviour;
 import jade.lang.acl.ACLMessage;
 
 /**
- * La classe EnvironmentAgent représente l'agent d'environnement.
+ * La classe {@link EnvironmentAgent} représente l'agent d'environnement.
  */
 public class EnvironmentAgent extends Agent
 {
@@ -26,7 +26,7 @@ public class EnvironmentAgent extends Agent
 	String m_currentGrid[][];
 	
 	/**
-	 * Méthode qui permet de mettre à jour {@link EnvironmentAgent#m_currentGrid} 
+	 * Permet de mettre à jour {@link EnvironmentAgent#m_currentGrid} 
 	 * via une grille linéarisée.
 	 * @param linearGrid La grille linéarisée de référence.
 	 */
@@ -47,6 +47,11 @@ public class EnvironmentAgent extends Agent
 		}
 	}
 	
+	/**
+	 * Convertit la grille {@link EnvironmentAgent#m_currentGrid} en grille standard 
+	 * (c'est-à-dire une grille d'entiers de 0 à 9).
+	 * @return Retourne la grille standardisée.
+	 */
 	public int[][] getStandardIntGrid()
 	{
 		int res[][] = {{0}};
@@ -63,6 +68,12 @@ public class EnvironmentAgent extends Agent
 		return res;
 	}
 	
+	
+	/**
+	 * Charge la grille d'origine dans {@link EnvironmentAgent#m_currentGrid} à partir d'un
+	 * fichier texte.
+	 * @param path Le chermin vers la grille.
+	 */
 	public void loadOriginalGrid(String path)
 	{
 		try 
@@ -86,6 +97,9 @@ public class EnvironmentAgent extends Agent
 		}
 	}
 	
+	/**
+	 * Affiche la grille standardisée.
+	 */
 	public void printGrid()
 	{
 		int currentGrid[][] = getStandardIntGrid();
@@ -106,6 +120,10 @@ public class EnvironmentAgent extends Agent
 	}
 }
 
+/**
+ * Behaviour pour les requêtes venant de la console (chargement d'une grille, acffichage de la
+ * grille actuelle, etc).
+ */
 class ConsoleBehaviour extends Behaviour
 {
 	EnvironmentAgent myAgent = ((EnvironmentAgent)this.myAgent);
@@ -141,6 +159,9 @@ class ConsoleBehaviour extends Behaviour
 	}
 }
 
+/**
+ * Behaviour pour les mises à jour venant du {@link SimulationAgent}.
+ */
 class ReceiveFromSimulationEnvironmentBehaviour extends Behaviour 
 {
 	@Override

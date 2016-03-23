@@ -6,7 +6,7 @@ import jade.core.Runtime;
 import jade.wrapper.AgentContainer;
 import jade.wrapper.AgentController;
 
-public class MainContainer 
+public class MainContainer
 {
 	public static String properties = "properties";
 	
