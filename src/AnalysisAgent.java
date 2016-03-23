@@ -5,18 +5,15 @@ import jade.core.Agent;
 import jade.core.behaviours.Behaviour;
 import jade.lang.acl.ACLMessage;
 
-public class EnvironmentAgent extends Agent
+public class AnalysisAgent extends Agent
 {
-	int numbers[];
-	int possibles[][];
-	
 	protected void setup()
 	{
-		addBehaviour(new AnalysisAgentBehaviour());
+		addBehaviour(new AnalysisToSimulationBehaviour());
 	}
 }
 
-class EnvironmentAgentBehaviour extends Behaviour 
+class AnalysisToSimulationBehaviour extends Behaviour 
 {
 	@Override
 	public void action()
@@ -25,14 +22,6 @@ class EnvironmentAgentBehaviour extends Behaviour
 
 		if(message != null)
 		{
-			String string = message.getContent();
-			
-			for(int i = 0 ; i < 9 ; i++)
-			{
-				((EnvironmentAgent)this.myAgent).numbers[i] = string.charAt(i);
-				
-				
-			}
 		}
 		else
 			block();
