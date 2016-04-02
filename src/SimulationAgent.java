@@ -70,6 +70,8 @@ public class SimulationAgent extends Agent
 
 class SimulationToEnvironmentBehaviour extends TickerBehaviour 
 {
+	SimulationAgent myAgent = (SimulationAgent)this.myAgent;
+	
 	public SimulationToEnvironmentBehaviour(Agent a, long period) 
 	{
 		super(a, period);
@@ -77,12 +79,12 @@ class SimulationToEnvironmentBehaviour extends TickerBehaviour
 	
 	public void onTick()
 	{
-		String content = "{grid : " + ((SimulationAgent)this.myAgent).getLinearizedGrid() + "}";
+		String content = "{grid : " + myAgent.getLinearizedGrid() + "}";
 
 		ACLMessage message = new ACLMessage(ACLMessage.INFORM);
 		message.addReceiver(new AID("Environment", AID.ISLOCALNAME));
 		message.setContent(content);
-		this.myAgent.send(message);	
+		myAgent.send(message);	
 	}
 }
 
@@ -95,7 +97,6 @@ class SimulationToAnalysisBehaviour extends Behaviour
 
 		if(message != null)
 		{
-			
 		}
 		else
 			block();
