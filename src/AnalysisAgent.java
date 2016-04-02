@@ -134,11 +134,11 @@ public class AnalysisAgent extends Agent
 	
 	protected void setup()
 	{
-		addBehaviour(new AnalysisToSimulationBehaviour());
+		addBehaviour(new ReceiveFromSimulationAnalysisBehaviour());
 	}
 }
 
-class AnalysisToSimulationBehaviour extends Behaviour 
+class ReceiveFromSimulationAnalysisBehaviour extends Behaviour 
 {
 	AnalysisAgent myAgent = (AnalysisAgent)this.myAgent;
 	

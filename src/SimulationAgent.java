@@ -17,8 +17,11 @@ public class SimulationAgent extends Agent
 {	
 	String m_grid[][];
 	AID analysisAgents[];
+	String analysisAgentsName[];
+	int m_counter = 0;
+	String[] m_strings;
 	
-	// quand l'agent de simulation sera créé, son constructeur va créer tous les agents d'analyses et stocker leurs AIDs
+	// quand l'agent de simulation sera créé, son constructeur va créer tous les agents d'analyses et stocker leurs AIDs et leurs noms
 	// dans un tableau
 	SimulationAgent()
 	{
@@ -32,6 +35,7 @@ public class SimulationAgent extends Agent
 			{
 				this.getContainerController().createNewAgent(name, "main.AnalysisAgent", null).start();
 				analysisAgents[i] = new AID(name, AID.ISLOCALNAME);
+				analysisAgentsName[i] = name;
 			}
 			catch(Exception ex)
 			{
@@ -153,7 +157,7 @@ public class SimulationAgent extends Agent
 	protected void setup()
 	{
 		addBehaviour(new SimulationToEnvironmentBehaviour(this, 5000));
-		addBehaviour(new SimulationToAnalysisBehaviour(this, 3000));
+		addBehaviour(new SimulationToAnalysisBehaviour());
 	}
 }
 
@@ -177,17 +181,12 @@ class SimulationToEnvironmentBehaviour extends TickerBehaviour
 	}
 }
 
-class SimulationToAnalysisBehaviour extends TickerBehaviour
+class SimulationToAnalysisBehaviour extends Behaviour
 {	
 	SimulationAgent myAgent = (SimulationAgent)this.myAgent;
-	
-	public SimulationToAnalysisBehaviour(Agent a, long period) 
-	{
-		super(a, period);
-	}	
 
 	@Override
-	public void onTick()
+	public void action()
 	{
 		String[] parts = myAgent.GetGridParts();
 		
@@ -200,7 +199,55 @@ class SimulationToAnalysisBehaviour extends TickerBehaviour
 			message.setContent(content);
 			myAgent.send(message);
 		}
+		
+		myAgent.m_counter = 27;
+	}
+	
+	public boolean done()
+	{
+		return false;
 	}
 }
 
-// behaviour réception
+class ReceiveFromAnalysisSimulationBehaviour extends Behaviour
+{	
+	SimulationAgent myAgent = (SimulationAgent)this.myAgent;
+
+	@Override
+	public void action()
+	{
+		ACLMessage message = myAgent.receive();
+		
+		if(message != null)
+		{
+			ObjectMapper mapper = new ObjectMapper();
+			
+			try 
+			{
+				JsonNode jRootNode = mapper.readValue(message.getContent(), JsonNode.class);
+				String string = jRootNode.path("string").textValue();
+				
+				switch(message.getSender().getLocalName())
+				{
+					case "AnalysisAgent0" :
+						myAgent.m_strings[0] = string;
+						
+						// mal aux yeux, je continuerai demain
+					break;
+				}
+				
+				myAgent.m_counter++;
+			}
+			catch(Exception ex) 
+			{	
+			}
+		}
+		else
+			block();
+	}
+	
+	public boolean done()
+	{
+		return false;
+	}
+}
