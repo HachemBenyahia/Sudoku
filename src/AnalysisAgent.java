@@ -12,11 +12,6 @@ public class AnalysisAgent extends Agent
 {
 	String[] parts; // parts.length vaut obligatoirement 9 par construction
 	
-	protected void setup()
-	{
-		addBehaviour(new AnalysisToSimulationBehaviour());
-	}
-	
 	public String DiffStrings(String toKeep, String toLose)
 	{
 		String res = "";
@@ -135,6 +130,11 @@ public class AnalysisAgent extends Agent
 		}
 		
 		return res;
+	}
+	
+	protected void setup()
+	{
+		addBehaviour(new AnalysisToSimulationBehaviour());
 	}
 }
 
