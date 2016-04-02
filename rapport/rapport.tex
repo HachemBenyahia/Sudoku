@@ -13,63 +13,40 @@
 \usepackage{color}
 \usepackage{comment}
 
-\begin{comment}
-
-\definecolor{black}{rgb}{0, 0, 0}
-\definecolor{darkPink}{rgb}{1.0, 0, 1.0}
-\definecolor{darkGreen}{rgb}{0, 0.4, 0}
-
-\lstdefinelanguage{myPython}
-{
-	morecomment=[l]{\#},
-	%morecomment=[s]{/*}{*/}
-	%morestring=[b]"
-}
-
-\lstset
-{
-	language = {myPython},
-	backgroundcolor=\color{cyan!10},
-	basicstyle=\small\tt,
-  breakatwhitespace=false,
-  breaklines=true,
-  commentstyle=\color{darkGreen},        
-  keepspaces=true,  
-  keywords = [1]{def, for, in, if, and, return, else, true, false},
-  keywordstyle = [1]\color{blue},  
-  keywords = [2]{range, len, append},
-  keywordstyle = [2]\color{darkPink},
-  keywords = [3]{testNeutre, testSymetrique, testAsso, testMorphisme},
-  keywordstyle = [3]\color{red},   
-  numbers=left,                   
-  numbersep=1em,                  
-  numberstyle=\tiny\color{black},       
-  showspaces=false,                
-  showstringspaces=false,          
-  showtabs=false,           
-  stepnumber=1,              
-  stringstyle = \color{grey!10},    
-  tabsize = 4
-}
-
-\end{comment}
-
-\title{Rapport IA04 - TD4 ~\\ Simulation et Environnement ~\\ Le Sudoku}
-\author{Hachem \bsc{Benyahia} ~\\ Cristian \bsc{Ghitu}}
-\date{12 mars 2016}
-
-\renewcommand{\thesection}{\arabic{section}}
-
 \fontfamily{ptm}
 
 \begin{document}
 
-\maketitle
-
-\renewcommand{\contentsname}{\centering Sommaire \vspace*{2 cm}}
-\tableofcontents
-
-\newpage
 \selectfont
 
+\noindent
+\textbf{Hachem BENYAHIA}
+~\\
+\textbf{Cristian GHITU}
+
+~\\
+\begin{center}
+\section*{Compte-rendu IA04 - TD4 ~\\ Simulation et Environnement ~\\ Le Sudoku}
+
+~\\
+\rule{\textwidth}{1pt}
+\end{center}
+
+~\\\\
+\textbf{1. Quels sont les rôles de chaque type d'agent ?}
+
+~\\
+Il y a trois types d'agents au total. L'agent d'environnement, l'agent de simulation et l'agent d'analyse. L'agent d'environnement stocke la matrice qui représente la grille [à continuer] + schéma geogebra
+
+~\\
+\textbf{2. Quelles sont les tâches de chaque type d'agents (en termes de Behaviour simples et
+composites) ?}
+
+~\\
+\textbf{3. Quel sont les types des messages échangés (request, inform, subscribe, etc.), leur
+utilité et leur contenu ?}
+
+~\\
+\textbf{4. En supposant que les agents d'analyse sont situés sur différentes stations, la résolution
+est-elle encore possible ?}
 \end{document}
