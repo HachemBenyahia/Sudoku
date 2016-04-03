@@ -23,6 +23,10 @@ public class MainContainer
 			AgentController environment = container.createNewAgent("Environment", 
 			"main.EnvironmentAgent", null);
 			environment.start();
+			
+			AgentController simulation = container.createNewAgent("Simulation", 
+			"main.SimulationAgent", null);
+			simulation.start();
 		}
 		catch(Exception exception) 
 		{

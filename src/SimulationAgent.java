@@ -5,6 +5,7 @@ import jade.core.Agent;
 import jade.core.behaviours.Behaviour;
 import jade.core.behaviours.TickerBehaviour;
 import jade.lang.acl.ACLMessage;
+import jade.lang.acl.MessageTemplate;
 import jade.wrapper.AgentController;
 
 import java.io.StringWriter;
@@ -312,7 +313,7 @@ class ReceiveFromEnvironmentSimulationBehaviour extends Behaviour
 	
 	public void action()
 	{
-		ACLMessage message = myAgent.receive();
+		ACLMessage message = myAgent.receive(MessageTemplate.MatchPerformative(ACLMessage.INFORM));
 
 		if(message != null)
 		{
@@ -376,7 +377,7 @@ class SimulationToAnalysisBehaviour extends TickerBehaviour
 			{
 				String content = "{string : " + parts[i] + "}";
 				
-				ACLMessage message = new ACLMessage(ACLMessage.INFORM);
+				ACLMessage message = new ACLMessage(ACLMessage.AGREE);
 				message.addReceiver(myAgent.analysisAgents[i]);
 				message.setContent(content);
 				myAgent.send(message);
@@ -396,7 +397,7 @@ class ReceiveFromAnalysisSimulationBehaviour extends Behaviour
 	@Override
 	public void action()
 	{
-		ACLMessage message = myAgent.receive();
+		ACLMessage message = myAgent.receive(MessageTemplate.MatchPerformative(ACLMessage.AGREE));
 		
 		if(message != null)
 		{

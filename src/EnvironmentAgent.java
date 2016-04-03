@@ -9,7 +9,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.Behaviour;
+import jade.core.behaviours.CyclicBehaviour;
 import jade.lang.acl.ACLMessage;
+import jade.lang.acl.MessageTemplate;
 
 /**
  * La classe {@link EnvironmentAgent} représente l'agent d'environnement.
@@ -141,8 +143,8 @@ public class EnvironmentAgent extends Agent
 	
 	protected void setup()
 	{
+		addBehaviour(new ReceiveFromConsoleEnvironmentBehaviour());
 		addBehaviour(new ReceiveFromSimulationEnvironmentBehaviour());
-		addBehaviour(new ConsoleBehaviour());
 	}
 }
 
@@ -150,13 +152,13 @@ public class EnvironmentAgent extends Agent
  * Behaviour pour les requêtes venant de la console (chargement d'une grille, acffichage de la
  * grille actuelle, etc).
  */
-class ConsoleBehaviour extends Behaviour
+class ReceiveFromConsoleEnvironmentBehaviour extends CyclicBehaviour
 {
-	EnvironmentAgent myAgent = ((EnvironmentAgent)this.myAgent);
+	EnvironmentAgent myAgent = (EnvironmentAgent)this.myAgent;
 	
 	public void action()
 	{
-		ACLMessage message = this.myAgent.receive();
+		ACLMessage message = myAgent.receive();
 
 		if(message != null)
 		{
@@ -187,25 +189,19 @@ class ConsoleBehaviour extends Behaviour
 		else
 			block();
 	}
-	
-	@Override
-	public boolean done() 
-	{
-		return false;
-	}
 }
 
 /**
  * Behaviour pour les mises à jour venant du {@link SimulationAgent}.
  */
-class ReceiveFromSimulationEnvironmentBehaviour extends Behaviour 
+class ReceiveFromSimulationEnvironmentBehaviour extends CyclicBehaviour 
 {
 	EnvironmentAgent myAgent = (EnvironmentAgent)this.myAgent;
 	
 	@Override
 	public void action()
 	{
-		ACLMessage message = this.myAgent.receive();
+		ACLMessage message = myAgent.receive(MessageTemplate.MatchPerformative(ACLMessage.INFORM));
 
 		if(message != null)
 		{
@@ -223,7 +219,7 @@ class ReceiveFromSimulationEnvironmentBehaviour extends Behaviour
 					System.out.println("------------ Grid solved ------------");
 					myAgent.printGrid();
 					
-					System.exit(0);
+					//System.exit(0);
 				}
 			}
 			catch(Exception ex) 
@@ -232,11 +228,5 @@ class ReceiveFromSimulationEnvironmentBehaviour extends Behaviour
 		}
 		else
 			block();
-	}
-		
-	@Override
-	public boolean done() 
-	{
-		return false;
 	}
 }

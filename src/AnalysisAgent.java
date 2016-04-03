@@ -7,6 +7,7 @@ import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.Behaviour;
 import jade.lang.acl.ACLMessage;
+import jade.lang.acl.MessageTemplate;
 
 public class AnalysisAgent extends Agent
 {
@@ -145,7 +146,7 @@ class ReceiveFromSimulationAnalysisBehaviour extends Behaviour
 	@Override
 	public void action()
 	{
-		ACLMessage message = myAgent.receive();
+		ACLMessage message = myAgent.receive(MessageTemplate.MatchPerformative(ACLMessage.AGREE));
 
 		if(message != null)
 		{
@@ -173,7 +174,7 @@ class ReceiveFromSimulationAnalysisBehaviour extends Behaviour
 				// on renvoit le message modifié
 				String content = "{string : " + myAgent.PartsToString() + "}";
 
-				ACLMessage reply = new ACLMessage(ACLMessage.INFORM);
+				ACLMessage reply = new ACLMessage(ACLMessage.AGREE);
 			    reply.addReceiver(message.getSender());
 			    reply.setContent(content);
 			    myAgent.send(reply);
