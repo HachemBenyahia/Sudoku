@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.Behaviour;
+import jade.core.behaviours.CyclicBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 
@@ -139,7 +140,7 @@ public class AnalysisAgent extends Agent
 	}
 }
 
-class ReceiveFromSimulationAnalysisBehaviour extends Behaviour 
+class ReceiveFromSimulationAnalysisBehaviour extends CyclicBehaviour 
 {
 	AnalysisAgent myAgent = (AnalysisAgent)this.myAgent;
 	
@@ -185,11 +186,5 @@ class ReceiveFromSimulationAnalysisBehaviour extends Behaviour
 		}
 		else
 			block();
-	}
-		
-	@Override
-	public boolean done() 
-	{
-		return false;
 	}
 }

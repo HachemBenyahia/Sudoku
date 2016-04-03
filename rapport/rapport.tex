@@ -83,16 +83,40 @@ composites) ?}
 \end{enumerate}
 
 ~\\
-\verb|AnalysisAgent| possède 2 behaviours 
+\verb|AnalysisAgent| possède quant à lui 1 behaviour : 
+
+~\
+\begin{enumerate}
+\item \verb|ReceiveFromSimulationAnalysisBehaviour| : ce behaviour traite les messages reçus de la part de l'agent de simulation. Les messages en question sont les parties de la grille à analyser (une partie par agent d'analyse). Ce behaviour hérite de \verb|CyclicBehaviour|.
+\end{enumerate}
 
 ~\\
 \textbf{3. Quel sont les types des messages échangés (request, inform, subscribe, etc.), leur
 utilité et leur contenu ?}
 
 ~\\
-Les messages utilisés pour communiquer entre l'agent de 
+La console JADE communique avec l'agent d'environnement via des messages de type \verb|ACLMessage.REQUEST|. La communication est unidirectionnelle, l'agent d'environnement n'envoie jamais de messages à la console JADE. Ces messages ont pour but soit de demander un affichage de la grille partiellement résolue actuelle, soit de charger une nouvelle grille à résoudre.
+
+~\\
+L'agent d'environnement et l'agent de simulation communiquent entre eux par des messages de type \verb|ACLMessage.INFORM|. Ce type est réservé à leur communication. Ainsi, si l'agent de simulation reçoit un \verb|ACLMessage.INFORM|, il sait automatiquement que le message provient de l'agent d'environnement. Les messages de l'agent d'environnement à l'agent de simulation sont en réponse à la requête de chargement d'une nouvelle grille en provenance de la console. Les messages de l'agent de simulation à l'agent d'environnement sont des mises à jour de la grille partiellement résolue actuelle (mettre à jour la version de l'agent d'environnement).
+
+~\\
+L'agent de simulation et les agents d'analyses communiquent entre eux par des messages de type \verb|ACLMessage.AGREE|. Ce type est réservé à leur communication. Ainsi, si l'agent de simulation reçoit un \verb|ACLMessage.AGREE|, il sait automatiquement que le message provient d'un agent d'analyse. Les messages de l'agent de simulation vers les agents d'analyses sont les envois périodiques de parties de la grille à être analysés. Les messages dans l'autre sens sont des réponses des agents d'analyses quand ils ont terminé d'analyser leur partie de grille.
+
+\newpage
+Voici un schéma qui complète la réponse :
+
+~\\
+\begin{figure}[h]
+\begin{center}
+\includegraphics[width=\textwidth]{schema.png}
+\end{center}
+\end{figure}
 
 ~\\
 \textbf{4. En supposant que les agents d'analyse sont situés sur différentes stations, la résolution
 est-elle encore possible ?}
+
+~\\
+Dans JADE, une connexion à une plate-forme est en fait une connexion à un conteneur qui se trouve sur une plate-forme différente via le fichier de configuration \textbf{properties}. Si on crée un conteneur secondaire par station et que dans un conteneur primaire on instancie ces conteneurs étrangers (en leur associant donc à chaque fois le bon fichier \textbf{properties}), on peut a priori rapatrier les données localement.
 \end{document}

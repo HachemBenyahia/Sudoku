@@ -3,6 +3,7 @@ package main;
 import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.Behaviour;
+import jade.core.behaviours.CyclicBehaviour;
 import jade.core.behaviours.TickerBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
@@ -301,13 +302,14 @@ public class SimulationAgent extends Agent
 	
 	protected void setup()
 	{
+		addBehaviour(new ReceiveFromAnalysisSimulationBehaviour());
 		addBehaviour(new SimulationToEnvironmentBehaviour(this, 5000));
 		addBehaviour(new SimulationToAnalysisBehaviour(this, 3000));
 		addBehaviour(new ReceiveFromEnvironmentSimulationBehaviour());
 	}
 }
 
-class ReceiveFromEnvironmentSimulationBehaviour extends Behaviour
+class ReceiveFromEnvironmentSimulationBehaviour extends CyclicBehaviour
 {
 	SimulationAgent myAgent = (SimulationAgent)this.myAgent;
 	
@@ -329,11 +331,6 @@ class ReceiveFromEnvironmentSimulationBehaviour extends Behaviour
 			{
 			}
 		}
-	}
-	
-	public boolean done()
-	{
-		return false;
 	}
 }
 
@@ -390,7 +387,7 @@ class SimulationToAnalysisBehaviour extends TickerBehaviour
 	}
 }
 
-class ReceiveFromAnalysisSimulationBehaviour extends Behaviour
+class ReceiveFromAnalysisSimulationBehaviour extends CyclicBehaviour
 {	
 	SimulationAgent myAgent = (SimulationAgent)this.myAgent;
 
@@ -439,10 +436,5 @@ class ReceiveFromAnalysisSimulationBehaviour extends Behaviour
 		}
 		else
 			block();
-	}
-	
-	public boolean done()
-	{
-		return false;
 	}
 }

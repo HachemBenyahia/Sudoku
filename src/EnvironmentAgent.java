@@ -149,7 +149,7 @@ public class EnvironmentAgent extends Agent
 }
 
 /**
- * Behaviour pour les requêtes venant de la console (chargement d'une grille, acffichage de la
+ * Behaviour pour les requêtes venant de la console (chargement d'une grille, affichage de la
  * grille actuelle, etc).
  */
 class ReceiveFromConsoleEnvironmentBehaviour extends CyclicBehaviour
@@ -158,7 +158,7 @@ class ReceiveFromConsoleEnvironmentBehaviour extends CyclicBehaviour
 	
 	public void action()
 	{
-		ACLMessage message = myAgent.receive();
+		ACLMessage message = myAgent.receive(MessageTemplate.MatchPerformative(ACLMessage.REQUEST));
 
 		if(message != null)
 		{
