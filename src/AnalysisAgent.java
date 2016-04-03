@@ -145,7 +145,7 @@ class ReceiveFromSimulationAnalysisBehaviour extends Behaviour
 	@Override
 	public void action()
 	{
-		ACLMessage message = this.myAgent.receive();
+		ACLMessage message = myAgent.receive();
 
 		if(message != null)
 		{

@@ -68,7 +68,6 @@ public class EnvironmentAgent extends Agent
 		return res;
 	}
 	
-	
 	/**
 	 * Charge la grille d'origine dans {@link EnvironmentAgent#m_currentGrid} à partir d'un
 	 * fichier texte.
@@ -113,6 +112,33 @@ public class EnvironmentAgent extends Agent
 		}
 	}
 	
+	/**
+	 * Renvoit vrai si la grille est résolue et faux sinon.
+	 */
+	public boolean IsOver()
+	{
+		int currentGrid[][] = getStandardIntGrid();
+		boolean over = true;
+		
+		for(int i = 0 ; i < 9 ; i++)
+			for(int j = 0 ; j < 9 ; j++)
+				if(currentGrid[i][j] == 0)
+					over = false;
+		
+		return over;
+	}
+	
+	public String getLinearizedGrid()
+	{
+		String res = "";
+		
+		for(int i = 0 ; i < 9 ; i++)
+			for(int j = 0 ; j < 9 ; j++)
+				res += (m_currentGrid[i][j] + " ");
+		
+		return res;
+	}
+	
 	protected void setup()
 	{
 		addBehaviour(new ReceiveFromSimulationEnvironmentBehaviour());
@@ -140,7 +166,17 @@ class ConsoleBehaviour extends Behaviour
 			{
 				case "read" :
 					if(args[1] != "")
+					{
 						myAgent.loadOriginalGrid(args[1]);
+						
+						// envoi de la grille à l'agent de simulation
+						String content = "{grid : " + myAgent.getLinearizedGrid() + "}";
+
+						ACLMessage newGridMessage = new ACLMessage(ACLMessage.INFORM);
+						newGridMessage.addReceiver(new AID("Simulation", AID.ISLOCALNAME));
+						newGridMessage.setContent(content);
+						myAgent.send(newGridMessage);	
+					}
 				break;
 				
 				case "print" :
@@ -164,6 +200,8 @@ class ConsoleBehaviour extends Behaviour
  */
 class ReceiveFromSimulationEnvironmentBehaviour extends Behaviour 
 {
+	EnvironmentAgent myAgent = (EnvironmentAgent)this.myAgent;
+	
 	@Override
 	public void action()
 	{
@@ -177,7 +215,16 @@ class ReceiveFromSimulationEnvironmentBehaviour extends Behaviour
 			{
 				JsonNode jRootNode = mapper.readValue(message.getContent(), JsonNode.class);
 				String linearGrid = jRootNode.path("grid").textValue();
-				((EnvironmentAgent)this.myAgent).updateGrid(linearGrid);
+				myAgent.updateGrid(linearGrid);
+				
+				// test si la grille est complétée, c'est-à dire qu'il n'y a pas de 0 dans la grille standardisée
+				if(myAgent.IsOver())
+				{
+					System.out.println("------------ Grid solved ------------");
+					myAgent.printGrid();
+					
+					System.exit(0);
+				}
 			}
 			catch(Exception ex) 
 			{	

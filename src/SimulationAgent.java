@@ -17,9 +17,9 @@ public class SimulationAgent extends Agent
 {	
 	String m_grid[][];
 	AID analysisAgents[];
-	String analysisAgentsName[];
 	int m_counter = 0;
 	String[] m_strings;
+	boolean treated = true;
 	
 	// quand l'agent de simulation sera créé, son constructeur va créer tous les agents d'analyses et stocker leurs AIDs et leurs noms
 	// dans un tableau
@@ -35,7 +35,6 @@ public class SimulationAgent extends Agent
 			{
 				this.getContainerController().createNewAgent(name, "main.AnalysisAgent", null).start();
 				analysisAgents[i] = new AID(name, AID.ISLOCALNAME);
-				analysisAgentsName[i] = name;
 			}
 			catch(Exception ex)
 			{
@@ -154,10 +153,186 @@ public class SimulationAgent extends Agent
 		return res;
 	}
 	
+	// reconstitue 3 grilles 9x9 à partir des analyses des 27 agents de lignes, colonnes et blocs
+	public String[][][] GetGridsFromParts()
+	{
+		String first[][] = {{""}}, second[][] = {{""}}, third[][] = {{""}}, string[] = {""};
+		int k = 0;
+
+		// lignes
+		for(int i = 0 ; i < 9 ; i++)
+		{
+			string = m_strings[i].split(" ");
+			
+			for(int j = 0 ; j < 9 ; j++)
+				first[i][j] = string[j];
+		}
+		
+		// colonnes
+		for(int i = 9 ; i < 18 ; i++)
+		{
+			string = m_strings[i].split(" ");
+			
+			for(int j = 0 ; j < 9 ; j++)
+				second[j][i - 9] = string[j];
+		}
+		
+		// blocs
+		// 1er bloc
+		string = m_strings[18].split(" ");
+		for(int i = 0 ; i < 3 ; i++)
+			for(int j = 0 ; j < 3 ; j++)
+			{
+				third[i][j] = string[k];
+				k++;
+			}
+		
+		// 2e bloc
+		string = m_strings[19].split(" ");
+		k = 0;
+		for(int i = 0 ; i < 3 ; i++)
+			for(int j = 3 ; j < 6 ; j++)
+			{
+				third[i][j] = string[k];
+				k++;
+			}
+		
+		// 3e bloc
+		string = m_strings[20].split(" ");
+		k = 0;
+		for(int i = 0 ; i < 3 ; i++)
+			for(int j = 6 ; j < 9 ; j++)
+			{
+				third[i][j] = string[k];
+				k++;
+			}
+		
+		// 4e bloc
+		string = m_strings[21].split(" ");
+		k = 0;
+		for(int i = 3 ; i < 6 ; i++)
+			for(int j = 0 ; j < 3 ; j++)
+			{
+				third[i][j] = string[k];
+				k++;
+			}
+		
+		// 5e bloc
+		string = m_strings[22].split(" ");
+		k = 0;
+		for(int i = 3 ; i < 6 ; i++)
+			for(int j = 3 ; j < 6 ; j++)
+			{
+				third[i][j] = string[k];
+				k++;
+			}
+		
+		// 6e bloc
+		string = m_strings[23].split(" ");
+		k = 0;
+		for(int i = 3 ; i < 6 ; i++)
+			for(int j = 6 ; j < 9 ; j++)
+			{
+				third[i][j] = string[k];
+				k++;
+			}
+		
+		// 7e bloc
+		string = m_strings[24].split(" ");
+		k = 0;
+		for(int i = 6 ; i < 9 ; i++)
+			for(int j = 0 ; j < 3 ; j++)
+			{
+				third[i][j] = string[k];
+				k++;
+			}
+		
+		// 8e bloc
+		string = m_strings[25].split(" ");
+		k = 0;
+		for(int i = 6 ; i < 9 ; i++)
+			for(int j = 3 ; j < 6 ; j++)
+			{
+				third[i][j] = string[k];
+				k++;
+			}
+		
+		// 9e bloc
+		string = m_strings[26].split(" ");
+		k = 0;
+		for(int i = 6 ; i < 9 ; i++)
+			for(int j = 6 ; j < 9 ; j++)
+			{
+				third[i][j] = string[k];
+				k++;
+			}
+		
+		return new String[][][] {first, second, third};
+	}
+	
+	public int GetSenderId(AID aid)
+	{
+		int i;
+		
+		for(i = 0 ; i < 27 ; i++)
+			if(aid == this.analysisAgents[i])
+				return i;
+		
+		return -1;
+	}
+	
+	public void updateGrid(String linearGrid)
+	{
+		String[] parts = linearGrid.split(" ");
+		
+		int j = 0;
+		
+		for(int i = 0 ; i < 9 * 9 ; i++)
+		{
+			m_grid[i][j] = parts[i];
+			
+			j++;
+			
+			if(j == 8)
+				j = 0;
+		}
+	}
+	
 	protected void setup()
 	{
 		addBehaviour(new SimulationToEnvironmentBehaviour(this, 5000));
-		addBehaviour(new SimulationToAnalysisBehaviour());
+		addBehaviour(new SimulationToAnalysisBehaviour(this, 3000));
+		addBehaviour(new ReceiveFromEnvironmentSimulationBehaviour());
+	}
+}
+
+class ReceiveFromEnvironmentSimulationBehaviour extends Behaviour
+{
+	SimulationAgent myAgent = (SimulationAgent)this.myAgent;
+	
+	public void action()
+	{
+		ACLMessage message = myAgent.receive();
+
+		if(message != null)
+		{
+			ObjectMapper mapper = new ObjectMapper();
+			
+			try 
+			{
+				JsonNode jRootNode = mapper.readValue(message.getContent(), JsonNode.class);
+				String linearGrid = jRootNode.path("grid").textValue();
+				myAgent.updateGrid(linearGrid);
+			}
+			catch(Exception ex) 
+			{
+			}
+		}
+	}
+	
+	public boolean done()
+	{
+		return false;
 	}
 }
 
@@ -181,31 +356,36 @@ class SimulationToEnvironmentBehaviour extends TickerBehaviour
 	}
 }
 
-class SimulationToAnalysisBehaviour extends Behaviour
+class SimulationToAnalysisBehaviour extends TickerBehaviour
 {	
-	SimulationAgent myAgent = (SimulationAgent)this.myAgent;
+	public SimulationToAnalysisBehaviour(Agent a, long period) 
+	{
+		super(a, period);
+	}
 
+	SimulationAgent myAgent = (SimulationAgent)this.myAgent;
+	
 	@Override
-	public void action()
+	public void onTick()
 	{
 		String[] parts = myAgent.GetGridParts();
-		
-		for(int i = 0 ; i < 27 ; i++)
-		{
-			String content = "{string : " + parts[i] + "}";
-			
-			ACLMessage message = new ACLMessage(ACLMessage.INFORM);
-			message.addReceiver(myAgent.analysisAgents[i]);
-			message.setContent(content);
-			myAgent.send(message);
-		}
-		
-		myAgent.m_counter = 27;
-	}
 	
-	public boolean done()
-	{
-		return false;
+		if((myAgent.m_counter == 0) && (myAgent.treated == true))
+		{
+			for(int i = 0 ; i < 27 ; i++)
+			{
+				String content = "{string : " + parts[i] + "}";
+				
+				ACLMessage message = new ACLMessage(ACLMessage.INFORM);
+				message.addReceiver(myAgent.analysisAgents[i]);
+				message.setContent(content);
+				myAgent.send(message);
+				
+				myAgent.m_counter++;
+			}
+			
+			myAgent.treated = false;
+		}
 	}
 }
 
@@ -227,16 +407,30 @@ class ReceiveFromAnalysisSimulationBehaviour extends Behaviour
 				JsonNode jRootNode = mapper.readValue(message.getContent(), JsonNode.class);
 				String string = jRootNode.path("string").textValue();
 				
-				switch(message.getSender().getLocalName())
-				{
-					case "AnalysisAgent0" :
-						myAgent.m_strings[0] = string;
-						
-						// mal aux yeux, je continuerai demain
-					break;
-				}
+				int i = myAgent.GetSenderId(message.getSender());
 				
-				myAgent.m_counter++;
+				myAgent.m_strings[i] = string;
+				
+				myAgent.m_counter--;
+				
+				// si on a reçu tous les messages qu'on a envoyé aux agents d'analyses, on peut updater la grille
+				if((myAgent.m_counter == 0) && (myAgent.treated == false))
+				{
+					String[][] newGrid = {{""}}, first, second, third;
+					String[][][] grids = myAgent.GetGridsFromParts();
+					
+					first = grids[0];
+					second = grids[1];
+					third = grids[2];
+					
+					for(int k = 0 ; k < 9 ; k++)
+						for(int j = 0 ; j < 9 ; j++)
+							newGrid[k][j] = myAgent.intersection(first[k][j], second[k][j], third[k][j]);
+					
+					myAgent.setGrid(newGrid);
+					
+					myAgent.treated = true;
+				}
 			}
 			catch(Exception ex) 
 			{	
